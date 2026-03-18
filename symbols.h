@@ -14,6 +14,7 @@ typedef  enum {
 typedef struct SymbolEntry {
   DataType data_type;
   char* identifier;
+  int needs_free;
   union {
     int i_value;
     int b_value;

@@ -60,23 +60,21 @@ data_type:
        ;
 
 expression:
-    NUMBER      { $$ = $1; }
-    | INT_LITERAL { $$= (int) $1; }
-    | DOUBLE_LITERAL { $$=(double) $1;}
-    | CHAR_LITERAL { $$=(char) $1; }
+    NUMBER          { $$ = $1; }
+    | INT_LITERAL   { $$ = (int) $1; }
+    | DOUBLE_LITERAL { $$ = (double) $1; }
+    | CHAR_LITERAL  { $$ = (char) $1; }
     | IDENTIFIER {
-      /* Retrieve identifier values */
       switch($1->data_type){
-        case TYPE_INT: $$ =  $1->data.i_value; break;
+        /* CAMBIADO A .data POR TU SYMBOLS.H */
+        case TYPE_INT:    $$ = $1->data.i_value; break;
         case TYPE_DOUBLE: $$ = $1->data.d_value; break;
-        case TYPE_BOOL: printf("TYPE ERROR: Cannot OPERATE with a boolean"); $$=0; break;
-        case TYPE_CHAR: printf("TYPE ERROR: Cannot OPERATE with a char"); $$=0; break;
-        case TYPE_STRING: printf("TYPE ERROR: Cannot OPERATE with a string"); $$=0; break;
+        case TYPE_BOOL:   printf("TYPE ERROR: No se puede operar con booleano\n"); $$=0; break;
+        default: $$ = 0;
       }
     }
-    | expression PLUS expression { $$ = $1 + $3;}
-    | expression SUB expression { $$ = $1 - $3;}
-    | LPARENT expression RPARENT { $$ = $2; }
+    | expression PLUS expression { $$ = $1 + $3; }
+    | expression SUB expression  { $$ = $1 - $3; }
     | expression MULT expression { $$ = $1 * $3; }
     | expression DIV expression  { 
         if ($3 == 0) {
@@ -85,6 +83,24 @@ expression:
         } else {
             $$ = $1 / $3; 
         }
+    }
+    | LPARENT expression RPARENT { $$ = $2; }
+    ;
+
+print_expression: 
+    PRINT IDENTIFIER {
+        switch($2->data_type) {
+            /* CAMBIADO A .data POR TU SYMBOLS.H */
+            case TYPE_INT:    printf("%d\n", $2->data.i_value); break;
+            case TYPE_BOOL:   printf("%s\n", $2->data.i_value ? "true" : "false"); break;
+            case TYPE_DOUBLE: printf("%f\n", $2->data.d_value); break;
+            case TYPE_CHAR:   printf("'%c'\n", $2->data.i_value); break;
+            case TYPE_STRING: printf("%s\n", $2->data.s_value); break;
+        }
+    }
+    | PRINT STRING_LITERAL {
+        printf("%s\n", $2);
+        free($2); /* Liberación de memoria para strings literales */
     }
     ;
 

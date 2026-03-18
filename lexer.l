@@ -47,6 +47,8 @@ STRING  \"(\\.|[^"\\])*\"
 "-"  { return SUB; }
 "*"  { return MULT; }
 "/"  { return DIV; }
+"print"     { return PRINT; }
+\"(\\.|[^"\\])*\"   { yylval.s_val = strdup(yytext); return STRING_LITERAL; }
 
 "true"          { yylval.b_val = 1; return BOOL_LITERAL; }
 "false"         { yylval.b_val = 0; return BOOL_LITERAL; }
